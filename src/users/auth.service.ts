@@ -11,21 +11,26 @@ export class AuthService {
 
   async signup(email: string, password: string) {
     // See if email already exists
-    const users = this.usersService.find(email);
-    if (users) {
+    const users = await this.usersService.find(email);
+    if (users.length) {
       throw new BadRequestException('Email already exists');
     }
 
     // Hash the users passsword
     // Generate a salt
     const salt = randomBytes(8).toString('hex');
+
     // Hash the salt and the password together
     const hash = (await scrypt(password, salt, 32)) as Buffer;
+
     // Join the hash result and the password together
     const result = salt + '.' + hash.toString('hex');
 
     // Create a new user and save it
+    const user = await this.usersService.create(email, result);
+
     // Return the new user
+    return user;
   }
 
   signin() {}
