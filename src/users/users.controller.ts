@@ -19,6 +19,7 @@ import {
 } from 'src/interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
 import { AuthService } from './auth.service';
+import { CurrentUser } from './decorators/current-user.decorator';
 
 @Controller('auth')
 @Serialize(UserDto)
@@ -38,12 +39,21 @@ export class UsersController {
     return session.color;
   }
 
+  // @Get('/whoami')
+  // async whoAmI(@Session() session: any) {
+  //   const user = await this.userService.findOne(session.userId);
+  //   if (!user) {
+  //     throw new NotFoundException('No logged in user found');
+  //   }
+  //   return user;
+  // }
+
   @Get('/whoami')
-  async whoAmI(@Session() session: any) {
-    const user = await this.userService.findOne(session.userId);
-    if (!user) {
-      throw new NotFoundException('No logged in user found');
-    }
+  async whoAmI(@CurrentUser() user: string) {
+    // const user = await this.userService.findOne(session.userId);
+    // if (!user) {
+    //   throw new NotFoundException('No logged in user found');
+    // }
     return user;
   }
 
